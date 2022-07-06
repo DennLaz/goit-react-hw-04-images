@@ -1,5 +1,5 @@
 // import { Component } from 'react';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
 import { ImSearch } from 'react-icons/im';
 
@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 import styles from './searchbar.module.css';
 
-export default function Searchbar({ onSubmit }) {
+function Searchbar({ onSubmit }) {
   const [value, setValue] = useState('');
 
   function handleValueChange({ target }) {
@@ -50,6 +50,8 @@ Searchbar.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 
+
+export default memo(Searchbar);
 
 // class OldSearchbar extends Component {
 

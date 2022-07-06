@@ -67,7 +67,7 @@ export default function ImageFinder() {
         setState({ ...state, items: [] });
       }
     },
-    [setPageQuery, setState, query, state]
+    [query, state]
   );
 
   const loadMoreClick = useCallback(() => {
@@ -89,7 +89,7 @@ export default function ImageFinder() {
         modalOpen: true,
       });
     }
-  },[setModal, modalImg, items])
+  },[modalImg, items])
 
   const closeModal = useCallback(() => {
     setModal({

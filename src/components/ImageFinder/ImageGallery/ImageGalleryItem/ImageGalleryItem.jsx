@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { memo } from 'react';
 
 import styles from './imageGalleryItem.module.css';
 
@@ -24,4 +25,4 @@ ImageGalleryItem.propTypes = {
   index: PropTypes.number.isRequired,
 };
 
-export default ImageGalleryItem;
+export default memo(ImageGalleryItem);
