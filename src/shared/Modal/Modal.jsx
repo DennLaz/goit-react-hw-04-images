@@ -14,7 +14,7 @@ export default function Modal({children, onClose}) {
   useEffect(() => {
     document.addEventListener("keydown", closeModal);
     return () => document.removeEventListener("keydown", closeModal);
-  },[]);
+  });
 
   function closeModal({ code, target, currentTarget }) {
     if (code === 'Escape' || target === currentTarget) {
