@@ -1,5 +1,5 @@
 // import { Component } from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Searchbar from './Searchbar';
 import { getImages } from '../../shared/services/getApi';
@@ -36,43 +36,48 @@ export default function ImageFinder() {
 
   useEffect(() => {
     async function getImgItems() {
-      setState(prevState => ({ ...prevState, error: false, loader: true }));
+      setState(prevState => ({ ...prevState, loader: true }));
       try {
         const data = await getImages(query, page);
         const totalPage = Math.ceil(data.totalHits / 12);
-        setState(
-          prevState => {
-            return {
-              ...prevState,
-              items: [...prevState.items, ...data.hits],
-            };
-          },
-          setPageQuery(prevPageQuery => {
-            return { ...prevPageQuery, totalPage };
-          })
-        );
+        setPageQuery(prevPageQuery => {
+          return { ...prevPageQuery, totalPage };
+        });
+        setState(prevState => {
+          return {
+            ...prevState,
+            items: [...prevState.items, ...data.hits],
+            loader: false,
+          };
+        });
       } catch (error) {
-        setState(prevState => ({ ...prevState, error}));
+        setState(prevState => ({ ...prevState, error, loader: false }));
       }
     }
-    getImgItems();
-  }, [query, page]);
 
-  function saveQuery(value) {
-    if (value !== query) {
-      setPageQuery({ query: value, page: 1, totalPage: 0 });
-      setState(prevState => ({ ...prevState, items: [] }));
+    if (query) {
+      getImgItems();
     }
-  }
+  }, [page, query]);
 
-  function loadMoreClick() {
+  const saveQuery = useCallback(
+    value => {
+      if (value !== query) {
+        setPageQuery({ query: value, page: 1, totalPage: 0 });
+        setState({ ...state, items: [] });
+      }
+    },
+    [setPageQuery, setState]
+  );
+
+  const loadMoreClick = useCallback(() => {
     setPageQuery(prevState => {
       const { page: prevPage } = prevState;
       return { ...prevState, page: prevPage + 1 };
     });
-  }
+  }, [setPageQuery])
 
-  function openModal(indx) {
+  const openModal = useCallback((indx) => {
     const { src: currentSrc } = modalImg;
     const { largeImageURL: src, tags: alt } = items[indx];
     if (currentSrc !== src) {
@@ -84,9 +89,9 @@ export default function ImageFinder() {
         modalOpen: true,
       });
     }
-  }
+  },[setModal, modalImg, items])
 
-  function closeModal() {
+  const closeModal = useCallback(() => {
     setModal({
       modalImg: {
         src: '',
@@ -94,7 +99,7 @@ export default function ImageFinder() {
       },
       modalOpen: false,
     });
-  }
+  }, [setModal])
 
   const notFound = !totalPage && query && !loader && !error;
   const noWrapper = error || loader || notFound;
@@ -149,21 +154,21 @@ export default function ImageFinder() {
 //   //   }
 //   // }
 
-//   // async getImgItems() {
-//   //   const { query, page } = this.state;
-//   //   this.setState({ loader: true });
-//   //   try {
-//   //     const data = await getImages(query, page);
-//   //     const totalPage = Math.ceil(data.totalHits / 12);
-//   //     this.setState(prevState => {
-//   //       const { items } = prevState;
+// async getImgItems() {
+//   const { query, page } = this.state;
+//   this.setState({ loader: true });
+//   try {
+//     const data = await getImages(query, page);
+//     const totalPage = Math.ceil(data.totalHits / 12);
+//     this.setState(prevState => {
+//       const { items } = prevState;
 
-//   //       return { items: [...items, ...data.hits], totalPage, loader: false };
-//   //     });
-//   //   } catch (error) {
-//   //     this.setState({ error, loader: false });
-//   //   }
-//   // }
+//       return { items: [...items, ...data.hits], totalPage, loader: false };
+//     });
+//   } catch (error) {
+//     this.setState({ error, loader: false });
+//   }
+// }
 
 //   // saveQuery = value => {
 //   //   const { query } = this.state;
