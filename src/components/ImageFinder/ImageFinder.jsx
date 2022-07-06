@@ -67,7 +67,7 @@ export default function ImageFinder() {
         setState({ ...state, items: [] });
       }
     },
-    [setPageQuery, setState]
+    [setPageQuery, setState, query, state]
   );
 
   const loadMoreClick = useCallback(() => {
